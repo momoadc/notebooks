@@ -1,5 +1,6 @@
-#ARG BASE_IMAGE
-FROM registry.access.redhat.com/ubi8/python-39:1-130
+ARG BASE_IMAGE
+# BASE_IMAGE=registry.access.redhat.com/ubi8/python-39:1-130
+FROM ${BASE_IMAGE}
 
 #LABEL name="odh-notebook-jupyter-minimal-ubi8-python-3.8" \
 #    summary="Minimal Jupyter notebook image for ODH notebooks" \
@@ -38,17 +39,22 @@ ENV PATH="$PYENV_ROOT/bin:$PATH"
 
 RUN echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
     echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+    eval "$(pyenv init -)" && source ~/.bashrc
 
-RUN eval "$(pyenv init -)" && source ~/.bashrc
-
-RUN pyenv install 3.10 && pyenv virtualenv 3.10 python3.10 && pyenv install 3.11 && pyenv virtualenv 3.11 python3.11
-
-RUN git clone https://github.com/aiguofer/pyenv-jupyter-kernel $(pyenv root)/plugins/pyenv-jupyter-kernel
+# RUN pyenv install 3.10 && pyenv virtualenv 3.10 python3.10 && pyenv install 3.11 && pyenv virtualenv 3.11 python3.11
+RUN pyenv install 3.10 && \
+    pyenv install 3.11 && \
+    pyenv virtualenv 3.10 python-3.10 && \
+    pyenv virtualenv 3.11 python-3.11 && \
+    git clone https://github.com/aiguofer/pyenv-jupyter-kernel $(pyenv root)/plugins/pyenv-jupyter-kernel
 
 RUN pyenv register-kernel 3.11 
 RUN pyenv register-kernel 3.10
 
+ENV NOTEBOOK_ACCESS_TOKEN=""
+ENV JUPYTER_NOTEBOOK_PORT=8080
+
+RUN jupyter contrib nbextension install --user
+
 ENTRYPOINT ["start-notebook.sh"]
-
-
