@@ -1,0 +1,9 @@
+{
+    "argv": [
+      "/opt/app-root/src/.pyenv/versions/python3.10/bin/python3.10",
+      "-m", "ipykernel",
+      "-f", "{connection_file}"
+    ],
+    "display_name": "python3.10",
+    "language": "python"
+  }

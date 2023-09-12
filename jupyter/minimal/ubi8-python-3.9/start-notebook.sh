@@ -1,5 +1,11 @@
 #!/bin/bash
 
+source ~/.bashrc
+
+pip3.9 install -r requirements-3.9.txt
+pip3.10 install -r requirements3.10.txt
+pip3.11 install -r requirements3.11.txt
+
 # Load bash libraries
 SCRIPT_DIR=/opt/app-root/bin
 source ${SCRIPT_DIR}/utils/process.sh
@@ -28,23 +34,14 @@ else
     NOTEBOOK_PROGRAM_ARGS+="--NotebookApp.notebook_dir=${HOME} "
 fi
 
-# Add custom password through a token
-if [ -n "${NOTEBOOK_ACCESS_TOKEN}" ]; then
-    NOTEBOOK_PROGRAM_ARGS+="--NotebookApp.password=${NOTEBOOK_ACCESS_TOKEN} "
-fi
-
-# Configure the IOPub data limit
-if [ -n "${IOPUB_DATA_LIMIT}" ]; then
-    NOTEBOOK_PROGRAM_ARGS+="--NotebookApp.iopub_data_rate_limit=${IOPUB_DATA_LIMIT} "
-fi
-
 # Add additional arguments if NOTEBOOK_ARGS variable is defined
 if [ -n "${NOTEBOOK_ARGS}" ]; then
     NOTEBOOK_PROGRAM_ARGS+=${NOTEBOOK_ARGS}
 fi
 
 # Start the JupyterLab notebook
-start_process jupyter notebook ${NOTEBOOK_PROGRAM_ARGS} \
+# start_process 
+jupyter notebook ${NOTEBOOK_PROGRAM_ARGS} \
     --NotebookApp.ip=0.0.0.0 \
     --NotebookApp.allow_origin="*" \
     --NotebookApp.open_browser=False \
