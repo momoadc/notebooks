@@ -1,13 +1,16 @@
 ARG BASE_IMAGE
-# BASE_IMAGE=registry.access.redhat.com/ubi8/python-39:1-130
+# BASE_IMAGE=registry.access.redhat.com/ubi8/python-39:1-
 FROM ${BASE_IMAGE}
 
 RUN curl https://pyenv.run | bash
 
 WORKDIR /opt/app-root/bin
 
+# If needed to connect to redhat refistry these are the username and password
+# In order to install packages inside container must disable subscription manager in_container check
 ARG REDHAT_USERNAME
 ARG REDHAT_PASSWORD
+# RUN subscription-manager register --force --username  ${REDHAT_USERNAME} --password ${REDHAT_PASSWORD}
 
 USER root
 
@@ -15,10 +18,8 @@ USER root
 RUN sed -i 's/\(def in_container():\)/\1\n    return False/g' /usr/lib64/python*/*-packages/rhsm/config.py && \
     # Replace default shell for user 1001 (default)
     sed -i '/^default/s:/sbin/nologin:/bin/bash:' /etc/passwd && \
-    # In order to install packages inside container must disable subscription manager in_container check
-    subscription-manager register --force --username  ${REDHAT_USERNAME} --password ${REDHAT_PASSWORD} && \
     # Packages required for pyenv
-    dnf install -y ncurses-devel readline-devel && \
+    dnf install -y ncurses-devel readline-devel git graphviz java-11-openjdk krb5-workstation mesa-libGL && \
     # Some commands required by pyenv which needed to be inserted to global profile
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
     echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
