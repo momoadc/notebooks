@@ -2,14 +2,15 @@ ARG BASE_IMAGE
 # BASE_IMAGE=registry.access.redhat.com/ubi8/python-39:1-
 FROM ${BASE_IMAGE}
 
+# Install pyenv for multiple python versions
 RUN curl https://pyenv.run | bash
 
 WORKDIR /opt/app-root/bin
 
 # If needed to connect to redhat refistry these are the username and password
 # In order to install packages inside container must disable subscription manager in_container check
-ARG REDHAT_USERNAME
-ARG REDHAT_PASSWORD
+# ARG REDHAT_USERNAME
+# ARG REDHAT_PASSWORD
 # RUN subscription-manager register --force --username  ${REDHAT_USERNAME} --password ${REDHAT_PASSWORD}
 
 USER root
